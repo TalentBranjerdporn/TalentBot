@@ -9,7 +9,7 @@ namespace TalentBot
     public class Program
     {
         public static void Main(string[] args)
-            => new Program().StartAsync().GetAwaiter().GetResult();
+            =>new Program().StartAsync().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
         private CommandHandler _commands;

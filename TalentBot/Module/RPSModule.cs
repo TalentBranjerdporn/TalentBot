@@ -18,7 +18,7 @@ namespace TalentBot.Module
 
         [Command("rps")]
         [Remarks("Play a game of rock paper scissors")]
-        [MinPermissions(AccessLevel.ServerAdmin)]
+        [MinPermissions(AccessLevel.User)]
         public async Task Rps([Remainder]string rps)
         {
             int rpsBot = rand.Next(rpsStrings.Length);
@@ -31,13 +31,16 @@ namespace TalentBot.Module
 
             if (rpsResult == 0)
             {
-                await ReplyAsync($"I played {played} {rpsIcon} \ndraw");
+                await ReplyAsync($"I played {played} {rpsIcon}");
+                await ReplyAsync("draw");
             } else if (rpsResult == 1 || rpsResult == -2)
             {
-                await ReplyAsync($"I played {played} {rpsIcon} \nI win (I promise I make the choice randomly and not based on your pick)");
+                await ReplyAsync($"I played {played} {rpsIcon}");
+                await ReplyAsync("I win (I promise I make the choice randomly and not based on your pick)");
             } else if (rpsResult == -1 || rpsResult == 2)
             {
-                await ReplyAsync($"I played {played} {rpsIcon} \nHow lucky you won");
+                await ReplyAsync($"I played {played} {rpsIcon}");
+                await ReplyAsync("How luck you win");
             }
         }
     }
