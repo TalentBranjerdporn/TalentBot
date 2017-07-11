@@ -1,14 +1,17 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using TalentBot.Preconditions;
+
 using System.Threading.Tasks;
 using System.IO;
 using System;
 
+
 namespace TalentBot.Modules
 {
     [Name("Admin")]
-    public class ExampleModule : ModuleBase<SocketCommandContext>
+    public class AdminModule : ModuleBase<SocketCommandContext>
     {
 
         [Command("say"), Alias("s")]
@@ -21,7 +24,7 @@ namespace TalentBot.Modules
 
         [Command("bugcat"), Alias("bc")]
         [Remarks("Random bugcat!")]
-        [MinPermissions(AccessLevel.ServerAdmin)]
+        [MinPermissions(AccessLevel.User)]
         public async Task Bugcat()
         {
             string[] arrayBugcats = new string[]
@@ -35,6 +38,22 @@ namespace TalentBot.Modules
 
             string path = arrayBugcats[rand.Next(arrayBugcats.Length)];
             await Context.Channel.SendFileAsync(path);
+        }
+
+        [Command("purge")]
+        [Summary("Deletes the specified amount of messages.")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task PurgeChat(int amount)
+        {
+
+            await Context.Channel.DeleteMessagesAsync((await Context.Channel.GetMessagesAsync(amount+1).Flatten()));
+            //var messages = await Context.Channel.GetMessagesAsync((int)amount + 1).Flatten();
+
+            //await Context.Channel.DeleteMessagesAsync(messages);
+            //const int delay = 5000;
+            //var m = await ReplyAsync($"Purge completed. _This message will be deleted in {delay / 1000} seconds._");
+            //await Task.Delay(delay);
+            //await m.DeleteAsync();
         }
 
         [Group("set"), Name("Admin")]
