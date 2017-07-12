@@ -9,6 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using System.Net.Http;
+using HtmlAgilityPack;
+using System.Collections;
 
 namespace TalentBot.Module
 {
@@ -27,6 +30,41 @@ namespace TalentBot.Module
 
             string randomBugcat = bugcats[rand.Next(bugcats.Length)];
             await Context.Channel.SendFileAsync(randomBugcat);
+        }
+
+        [Command("ancestor")]
+        [Remarks("Wisdom from the ancestor")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Ancestor()
+        {
+            string Url = "http://darkestdungeon.gamepedia.com/Narrator";
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument doc = web.Load(Url);
+            List<string> quotes = new List<string>();
+
+            var tables = doc.DocumentNode.SelectNodes("//table/tr/td");
+            foreach (var v in tables)
+            {
+                if (tables.IndexOf(v)%3 == 1)
+                {
+                    quotes.Add(v.InnerText);
+                }
+            }
+
+            int randPos = rand.Next(quotes.Count);
+            string wisdom = quotes[randPos];
+
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(1, 1, 1),
+                Description = wisdom
+            };
+            builder.WithFooter(footer =>
+            {
+                footer.WithText("~The Ancestor");
+            });
+
+            await Context.Channel.SendMessageAsync("", false, builder.Build());
         }
     }
 }
