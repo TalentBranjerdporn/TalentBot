@@ -22,24 +22,6 @@ namespace TalentBot.Modules
             await ReplyAsync(text);
         }
 
-        [Command("bugcat"), Alias("bc")]
-        [Remarks("Random bugcat!")]
-        [MinPermissions(AccessLevel.User)]
-        public async Task Bugcat()
-        {
-            string[] arrayBugcats = new string[]
-            {
-                "images/bugcat/BugCatAngel.PNG",
-                "images/bugcat/BugCatConfused.JPG",
-                "images/bugcat/BugCatDog.JPG"
-            };
-
-            Random rand = new Random();
-
-            string path = arrayBugcats[rand.Next(arrayBugcats.Length)];
-            await Context.Channel.SendFileAsync(path);
-        }
-
         [Command("purge")]
         [Summary("Deletes the specified amount of messages.")]
         [MinPermissions(AccessLevel.ServerAdmin)]

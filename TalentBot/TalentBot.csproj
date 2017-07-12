@@ -6,29 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\Bugcat\BugCatAngel.PNG" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Images\Bugcat\BugCatAngel.PNG" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.1" />
     <PackageReference Include="Discord.Net.Commands" Version="1.0.1" />
     <PackageReference Include="Discord.Net.WebSocket" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Images\Bugcat\BugCatAngel.PNG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Images\Bugcat\BugCatConfused.JPG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Images\Bugcat\BugCatDog.JPG">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="Images\" />
   </ItemGroup>
 
 </Project>
