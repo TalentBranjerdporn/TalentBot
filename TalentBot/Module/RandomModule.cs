@@ -85,10 +85,22 @@ namespace TalentBot.Module
         [Command("roll")]
         [Remarks("Roll a something with many sides apparently")]
         [MinPermissions(AccessLevel.User)]
-        public async Task Roll()
+        public async Task Roll(params string[] nums)
         {
-            int num = rand.Next(100);
-            await Context.Channel.SendMessageAsync($"Rolled a {num}");
+            if (nums.Length == 0)
+            {
+                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(100)+1}");
+            }
+            else if (nums.Length == 1)
+            {
+                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(int.Parse(nums[0]))+1}");
+            }
+            else if (nums.Length == 2)
+            {
+                int num = int.Parse(nums[1]) - int.Parse(nums[0]);
+                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(num)+1+int.Parse(nums[0])}");
+            }
+            
         }
     }
 }
