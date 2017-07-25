@@ -66,5 +66,29 @@ namespace TalentBot.Module
 
             await Context.Channel.SendMessageAsync("", false, builder.Build());
         }
+
+        [Command("flip")]
+        [Remarks("Flip a coin")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Flip()
+        {
+            if (rand.Next(2) == 1)
+            {
+                await Context.Channel.SendMessageAsync("Flipped Heads");
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("Flipped Tails");
+            }
+        }
+
+        [Command("roll")]
+        [Remarks("Roll a something with many sides apparently")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Roll()
+        {
+            int num = rand.Next(100);
+            await Context.Channel.SendMessageAsync($"Rolled a {num}");
+        }
     }
 }
