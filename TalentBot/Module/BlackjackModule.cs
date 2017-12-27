@@ -1,13 +1,11 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using TalentBot.Preconditions;
 
 using System;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 
 namespace TalentBot.Module
 {

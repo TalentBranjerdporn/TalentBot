@@ -1,17 +1,11 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using TalentBot.Preconditions;
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.Diagnostics;
-using System.Net.Http;
 using HtmlAgilityPack;
-using System.Collections;
 
 namespace TalentBot.Module
 {
@@ -45,7 +39,7 @@ namespace TalentBot.Module
             var tables = doc.DocumentNode.SelectNodes("//table/tr/td");
             foreach (var v in tables)
             {
-                if (tables.IndexOf(v)%3 == 1)
+                if (tables.IndexOf(v) % 3 == 1)
                 {
                     quotes.Add(v.InnerText);
                 }
@@ -89,18 +83,18 @@ namespace TalentBot.Module
         {
             if (nums.Length == 0)
             {
-                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(100)+1}");
+                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(100) + 1}");
             }
             else if (nums.Length == 1)
             {
-                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(int.Parse(nums[0]))+1}");
+                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(int.Parse(nums[0])) + 1}");
             }
             else if (nums.Length == 2)
             {
                 int num = int.Parse(nums[1]) - int.Parse(nums[0]);
-                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(num)+1+int.Parse(nums[0])}");
+                await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(num) + 1 + int.Parse(nums[0])}");
             }
-            
+
         }
     }
 }
