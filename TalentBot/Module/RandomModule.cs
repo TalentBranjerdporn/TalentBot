@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using HtmlAgilityPack;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TalentBot.Module
 {
@@ -32,7 +33,7 @@ namespace TalentBot.Module
         [MinPermissions(AccessLevel.User)]
         public async Task Ancestor()
         {
-            string Url = "http://darkestdungeon.gamepedia.com/Narrator";
+            string Url = "https://darkestdungeon.gamepedia.com/Narrator";
             HtmlWeb web = new HtmlWeb();
             HtmlDocument doc = web.Load(Url);
             List<string> quotes = new List<string>();
@@ -95,6 +96,149 @@ namespace TalentBot.Module
                 int num = int.Parse(nums[1]) - int.Parse(nums[0]);
                 await Context.Channel.SendMessageAsync($"Rolled a {rand.Next(num) + 1 + int.Parse(nums[0])}");
             }
+        }
+
+        [Command("randomhero")]
+        [Remarks("The classic random for all the elitists who equate randoming to higher level play")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task RandomHero()
+        {
+            // Hmm I feel like there should possibly be a better way but I'm too lazy to think too hard. Pls no hate
+            // Also future adding hero pictures?
+            string[] heros =
+            {
+                "Abaddon",
+                "Alchemist",
+                "Ancient Apparition",
+                "Anti-Mage",
+                "Arc Warden",
+                "Axe",
+                "Bane",
+                "Batrider",
+                "Beastmaster",
+                "Bloodseeker",
+                "Bounty Hunter",
+                "Brewmaster",
+                "Bristleback",
+                "Broodmother",
+                "Centaur Warrunner",
+                "Chaos Knight",
+                "Chen",
+                "Clinkz",
+                "Clockwork",
+                "Crystal Maiden",
+                "Dark Seer",
+                "Dark Willow",
+                "Dazzle",
+                "Death Prophet",
+                "Disruptor",
+                "Doom",
+                "Dragon Knight",
+                "Drow Ranger",
+                "Earth Spirit",
+                "Earthshaker",
+                "Elder Titan",
+                "Ember Spirit",
+                "Enchantress",
+                "Enigma",
+                "Faceless Void",
+                "Gyrocopter",
+                "Huskar",
+                "Invoker",
+                "Io",
+                "Jakiro",
+                "Juggernaut",
+                "Keeper of the Light",
+                "Kunkka",
+                "Legion Commander",
+                "Leshrac",
+                "Lich",
+                "Lifestealer",
+                "Lina",
+                "Lion",
+                "Lone Druid",
+                "Luna",
+                "Lycan",
+                "Magnus",
+                "Medusa",
+                "Meepo",
+                "Mirana",
+                "Monkey King",
+                "Morphling",
+                "Naga Siren",
+                "Nature's Prophet",
+                "Necrophos",
+                "Night Stalker",
+                "Nyx Assassin",
+                "Ogre Magi",
+                "Omniknight",
+                "Oracle",
+                "Outworld Devourer",
+                "Pangolier",
+                "Phantom Assassin",
+                "Phantom Lancer",
+                "Phoenix",
+                "Puck",
+                "Pudge",
+                "Pugna",
+                "Queen of Pain",
+                "Razor",
+                "Riki",
+                "Rubick",
+                "Sand King",
+                "Shadow Demon",
+                "Shadow Fiend",
+                "Shadow Shaman",
+                "Silencer",
+                "Skywrath Mage",
+                "Slardar",
+                "Slark",
+                "Sniper",
+                "Spectre",
+                "Spirit Breaker",
+                "Storm Spirit",
+                "Sven",
+                "Techies",
+                "Templar Assassin",
+                "Terrorblade",
+                "Tidehunter",
+                "Timbersaw",
+                "Tinker",
+                "Tiny",
+                "Treat Protector",
+                "Troll Warlord",
+                "Tusk",
+                "Underlord",
+                "Undying",
+                "Ursa",
+                "Vengeful Spirit",
+                "Venomancer",
+                "Viper",
+                "Visage",
+                "Warlock",
+                "Weaver",
+                "Windranger",
+                "Winter Wyvern",
+                "Witch Doctor",
+                "Wraith King",
+                "Zeus"
+            };
+
+            string rand_hero = heros[rand.Next(heros.Length)];
+            await Context.Channel.SendMessageAsync($"You have randomed {rand_hero}");
+
+            //string Url = "https://dota2.gamepedia.com/Table_of_hero_attributes";
+            //HtmlWeb web = new HtmlWeb();
+            //HtmlDocument doc = web.Load(Url);
+            //List<string> heroes = new List<string>();
+
+            //var tables = doc.DocumentNode.SelectNodes("//div[@id='mw-content-text']/table[2]/tbody/tr[1]/td[1]/span/a[2]");
+
+            //foreach (var v in herotable)
+            //{
+            //    await Context.Channel.SendMessageAsync($"{v.InnerText}");
+            //    // heroes.Add(v.InnerText);
+            //}//*[@id="mw-content-text"]/table[2]/tbody/tr[1]/td[1]/span/a[2]
 
         }
     }
