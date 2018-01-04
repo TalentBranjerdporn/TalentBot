@@ -18,7 +18,7 @@ namespace TalentBot
         /// <summary> Your bot's command prefix. </summary>
         public string Prefix { get; set; } = "!";
         /// <summary> Your bot's login token. </summary>
-        public string Token { get; set; } = Hidden.token;
+        public string Token { get; set; } = "MzMyMDE1OTY1NjY1NzU1MTQ3.DS8IUA.3n20cerBCeU_eaJ6bxYFncTIXJE";
 
         public static void EnsureExists()
         {

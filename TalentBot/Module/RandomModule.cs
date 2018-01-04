@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using System.IO;
 using HtmlAgilityPack;
+using System.Collections.Generic;
 
 namespace TalentBot.Module
 {

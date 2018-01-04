@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 
 using System;
@@ -8,32 +9,43 @@ namespace TalentBot
 {
     public class Program
     {
-        public static void Main(string[] args)
-            =>new Program().StartAsync().GetAwaiter().GetResult();
-
         private DiscordSocketClient _client;
+
+        public static void Main(string[] args)
+            => new Program().MainAsync().GetAwaiter().GetResult();
+
         private CommandHandler _commands;
 
-        public async Task StartAsync()
+        public async Task MainAsync()
         {
-            Configuration.EnsureExists();                    // Ensure the configuration file has been created.
-                                                             // Create a new instance of DiscordSocketClient.
-            _client = new DiscordSocketClient(new DiscordSocketConfig()
-            {
-                LogLevel = LogSeverity.Verbose,              // Specify console verbose information level.
-                MessageCacheSize = 1000                      // Tell discord.net how long to store messages (per channel).
-            });
+            _client = new DiscordSocketClient();
 
-            _client.Log += (l)                               // Register the console log event.
-                => Console.Out.WriteLineAsync(l.ToString());
+            _client.Log += Log;
+            _client.MessageReceived += MessageReceived;
 
-            await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
+            string token = Hidden.token; // Remember to keep this private!
+            await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
             _commands = new CommandHandler();                // Initialize the command handler service
             await _commands.InstallAsync(_client);
 
-            await Task.Delay(-1);                            // Prevent the console window from closing.
+            // Block this task until the program is closed.
+            await Task.Delay(-1);
+        }
+
+        private async Task MessageReceived(SocketMessage message)
+        {
+            if (message.Content == "welcome back")
+            {
+                await message.Channel.SendMessageAsync("yay!");
+            }
+        }
+
+        private Task Log(LogMessage msg)
+        {
+            Console.WriteLine(msg.ToString());
+            return Task.CompletedTask;
         }
 
     }
