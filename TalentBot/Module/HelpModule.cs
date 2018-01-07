@@ -26,7 +26,7 @@ namespace TalentBot.Modules
 
             foreach (var module in _service.Modules)
             {
-                if (module.Name == "Blackjack" || module.Name == "Admin" || module.Name == "HelpModule" || module.Name == "MathModule")
+                if (module.Name == "Blackjack" || module.Name == "Admin" || module.Name == "HelpModule" || module.Name == "Math" || module.Name == "RoShamBo")
                 {
                     continue;
                 }
