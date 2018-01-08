@@ -18,7 +18,7 @@ namespace TalentBot
         /// <summary> Your bot's command prefix. </summary>
         public string Prefix { get; set; } = "!";
         /// <summary> Your bot's login token. </summary>
-        public string Token { get; set; } = "MzMyMDE1OTY1NjY1NzU1MTQ3.DS8IUA.3n20cerBCeU_eaJ6bxYFncTIXJE";
+        public string Token { get; set; } = Hidden.token;
 
         public static void EnsureExists()
         {
@@ -26,15 +26,13 @@ namespace TalentBot
             if (!File.Exists(file))                                 // Check if the configuration file exists.
             {
                 string path = Path.GetDirectoryName(file);          // Create config directory if doesn't exist.
+                Console.WriteLine(path);
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
                 var config = new Configuration();                   // Create a new configuration object.
 
-                Console.WriteLine("Please enter your token: ");
-                string token = Console.ReadLine();                  // Read the bot token from console.
-
-                config.Token = token;
+                config.Token = Hidden.token;
                 config.SaveJson();                                  // Save the new configuration object to file.
             }
             Console.WriteLine("Configuration Loaded");

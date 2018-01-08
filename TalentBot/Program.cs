@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace TalentBot
@@ -18,13 +19,20 @@ namespace TalentBot
 
         public async Task MainAsync()
         {
-            _client = new DiscordSocketClient();
+            Configuration.EnsureExists();
 
-            _client.Log += Log;
+            _client = new DiscordSocketClient(new DiscordSocketConfig()
+            {
+                LogLevel = LogSeverity.Verbose,              // Specify console verbose information level.
+                MessageCacheSize = 1000                      // Tell discord.net how long to store messages (per channel).
+            });
+
+            _client.Log += (l)                               // Register the console log event.
+                => Console.Out.WriteLineAsync(l.ToString());
+
             _client.MessageReceived += MessageReceived;
 
-            string token = Hidden.token; // Remember to keep this private!
-            await _client.LoginAsync(TokenType.Bot, token);
+            await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
             await _client.StartAsync();
 
             _commands = new CommandHandler();                // Initialize the command handler service
@@ -36,6 +44,49 @@ namespace TalentBot
 
         private async Task MessageReceived(SocketMessage message)
         {
+            // Logging
+            Console.WriteLine($"{message.Author}: {message.ToString()}");
+
+            string[] hi_message =
+            {
+                "Nice to meet you",
+                "How are you today?",
+                "Hope you're having a nice day",
+                "You ready for some games?",
+                "Hello!",
+                "Hiya",
+                "Greetings"
+            };
+
+
+            foreach (SocketUser user in message.MentionedUsers)
+            {
+                if (user.ToString() == "talent-bot#7593")
+                {
+                    if (message.Content.Contains("Hi") || message.Content.Contains("hi") ||
+                        message.Content.Contains("Hello") ||  message.Content.Contains("hello") || 
+                        message.Content.Contains("Hiya") || message.Content.Contains("hiya") ||
+                        message.Content.Contains("Greetings") || message.Content.Contains("greetings"))
+                    {
+                        if (message.Author.ToString() == "Pwnstar#6451")
+                        {
+                            await message.Channel.SendMessageAsync($"Hi! Thanks for adding me to the server {message.Author.Mention}");
+                        }
+                        else if (message.Author.ToString() == "!!#7047")
+                        {
+                            await message.Channel.SendMessageAsync($"Hello! I would appreciate if you didn't try to break me {message.Author.Mention}");
+                        }
+                        else
+                        {
+                            Random rand = new Random();
+                            await message.Channel.SendMessageAsync($"{hi_message[rand.Next(hi_message.Length)]} {message.Author.Mention}");
+                        }
+
+                        break;
+                    }
+                }
+            }
+
             if (message.Content == "welcome back")
             {
                 await message.Channel.SendMessageAsync("yay!");

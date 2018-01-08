@@ -28,8 +28,8 @@ namespace TalentBot.Common.API
 
             if (days > 0)
                 requestString += $@"&date={days}";
-            if (lobbyType > 0)
-                requestString += $@"&lobby_type={lobbyType}";
+            //if (lobbyType > -1)
+            requestString += $@"&lobby_type={lobbyType}";
 
             requestString += $@"&project[]=hero_id&project[]=kills&project[]=deaths&project[]=assists&project[]=xp_per_min&project[]=gold_per_min&project[]=hero_damage&project[]=tower_damage&project[]=hero_healing&project[]=last_hits";
             string result = await RequestHandler.GET(requestString);
