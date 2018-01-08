@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,11 +32,20 @@ namespace TalentBot.Modules
                     continue;
                 }
                 string description = null;
+
+                HashSet<string> cmds = new HashSet<string>();
+
                 foreach (var cmd in module.Commands)
                 {
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
-                        description += $"{prefix}{cmd.Aliases.First()}\n";
+                    {
+                        if (cmds.Add(cmd.Aliases.First()))
+                        {
+                            description += $"{prefix}{cmd.Aliases.First()}\n";
+                        }
+                        
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(description))
@@ -77,7 +87,15 @@ namespace TalentBot.Modules
                 builder.AddField(x =>
                 {
                     x.Name = string.Join(", ", cmd.Aliases);
-                    x.Value = $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" +
+                    string param;
+                    if (cmd.Parameters.Count == 0)
+                    {
+                        param = "None";
+                    } else
+                    {
+                        param = string.Join(", ", cmd.Parameters.Select(p => p.Name));
+                    }
+                    x.Value = $"Parameters: {param}\n" +
                               $"Remarks: {cmd.Remarks}";
                     x.IsInline = false;
                 });

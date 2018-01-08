@@ -48,27 +48,44 @@ namespace TalentBot.Module
         }
 
         [Command("roll")]
-        [Remarks("Roll a something with many sides apparently")]
+        [Remarks("Roll a dice with 100 sides apparently")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Roll()
+        {
+            await Context.Channel.SendMessageAsync($"{Context.Message.Author.Mention} rolls {rand.Next(100) + 1}");
+        }
+
+        [Command("roll")]
+        [Remarks("Roll a dice with 'num' sides\nUsage: roll <num>")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Roll(int num)
+        {
+            await Context.Channel.SendMessageAsync($"{Context.Message.Author.Mention} rolls {rand.Next(num) + 1}");
+        }
+
+        [Command("roll")]
+        [Remarks("Roll between two numbers\nUsage: roll <num1> <num2>")]
         [MinPermissions(AccessLevel.User)]
         public async Task Roll(params string[] nums)
         {
-            if (nums.Length == 0)
+            try
             {
-                await Context.Channel.SendMessageAsync($"{Context.Message.Author.Mention} rolls {rand.Next(100) + 1}");
-            }
-            else if (nums.Length == 1)
+                if (nums.Length == 2)
+                {
+                    int num = int.Parse(nums[1]) - int.Parse(nums[0]);
+                    await Context.Channel.SendMessageAsync($"{Context.Message.Author.Mention} rolls {rand.Next(num) + 1 + int.Parse(nums[0])}");
+                } else
+                {
+                    throw new Exception("Input string was not in a correct format.");
+                }
+            } catch (Exception e)
             {
-                await Context.Channel.SendMessageAsync($"{Context.Message.Author.Mention} rolls {rand.Next(int.Parse(nums[0])) + 1}");
-            }
-            else if (nums.Length == 2)
-            {
-                int num = int.Parse(nums[1]) - int.Parse(nums[0]);
-                await Context.Channel.SendMessageAsync($"{Context.Message.Author.Mention} rolls {rand.Next(num) + 1 + int.Parse(nums[0])}");
+                await Context.Channel.SendMessageAsync($"{e.Message} \nUsage: roll <num1> <num2>");
             }
         }
 
         [Command("randomhero")]
-        [Remarks("The classic random for all the elitists who equate randoming to higher level play and satisfaction")]
+        [Remarks("The classic random for all the elitists who equate randoming to higher level play and greater satisfaction")]
         [MinPermissions(AccessLevel.User)]
         public async Task RandomHero()
         {
@@ -211,8 +228,8 @@ namespace TalentBot.Module
 
         }
 
-        [Command("medal")]
-        [Remarks("Medal check. Note: Only works for games with Pwnstar unfortunately")]
+        [Command("medals")]
+        [Remarks("Medal check. Note: Only works for games with Pwnstar unfortunately. Also has unintended effects with coaches")]
         [MinPermissions(AccessLevel.User)]
         public async Task MedalCheck(params string[] cmds)
         {

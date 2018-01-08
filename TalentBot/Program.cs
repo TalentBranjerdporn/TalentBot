@@ -35,6 +35,8 @@ namespace TalentBot
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
             await _client.StartAsync();
 
+            ChangeGame();
+
             _commands = new CommandHandler();                // Initialize the command handler service
             await _commands.InstallAsync(_client);
 
@@ -97,6 +99,14 @@ namespace TalentBot
         {
             Console.WriteLine(msg.ToString());
             return Task.CompletedTask;
+        }
+
+        public async void ChangeGame()
+        {
+            // Choose random game
+            Random rand = new Random();
+            string game = Hidden.game_display[rand.Next(Hidden.game_display.Length)];
+            await _client.SetGameAsync(game);
         }
 
     }
