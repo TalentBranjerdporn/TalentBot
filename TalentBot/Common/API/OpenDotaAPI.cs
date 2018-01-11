@@ -11,7 +11,7 @@ namespace TalentBot.Common.API
 {
     class OpenDotaAPI
     {
-        public static async Task<PlayerData> GetPlayerDataAsync(string playerID)
+        public static async Task<PlayerData> GetPlayerData(string playerID)
         {
             string result = await RequestHandler.GET($"https://api.opendota.com/api/players/{playerID}");
 
@@ -38,6 +38,15 @@ namespace TalentBot.Common.API
                 return JsonConvert.DeserializeObject<MatchData[]>(result);
             else
                 return null;
+        }
+
+        public static async Task<HeroData[]> GetHeroStatData()
+        {
+            string requestString = $@"https://api.opendota.com/api/heroStats";
+
+            string result = await RequestHandler.GET(requestString);
+
+            return JsonConvert.DeserializeObject<HeroData[]>(result);
         }
 
         public static string GetLastLobby(string filePath)

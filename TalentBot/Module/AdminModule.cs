@@ -6,7 +6,8 @@ using TalentBot.Preconditions;
 using System.Threading.Tasks;
 using System.IO;
 using System;
-
+using TalentBot.Common.API;
+using System.Collections.Generic;
 
 namespace TalentBot.Modules
 {
@@ -56,5 +57,33 @@ namespace TalentBot.Modules
                 await ReplyAsync($"I changed my name to **{name}**");
             }
         }
+
+        [Command("test")]
+        [Remarks("Just a test command")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task Test()
+        {
+            List<String> players = OpenDotaAPI.GetPlayerIDs();
+            PlayerData data = await OpenDotaAPI.GetPlayerData(players[0]);
+
+            if (data.profile != null)
+            {
+                //await Context.Channel.SendMessageAsync($"{data.solo_competitive_rank}");
+                if (data.solo_competitive_rank == null)
+                {
+                    await ReplyAsync($"empty");
+                } else
+                {
+                    await ReplyAsync($"this");
+                }
+                
+            } else
+            {
+                //await Context.Channel.SendMessageAsync("This is null");
+                await ReplyAsync($"This is null");
+            }
+            
+        }
+
     }
 }

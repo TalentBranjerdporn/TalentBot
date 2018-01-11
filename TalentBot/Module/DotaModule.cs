@@ -7,8 +7,6 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Text;
-using System.Net;
-using System.IO;
 using System.Collections.Generic;
 
 namespace TalentBot.Module
@@ -19,7 +17,8 @@ namespace TalentBot.Module
 
         enum Medal
         {
-            Herald = 2,
+            Herald = 1,
+            Guardian = 2,
             Crusader = 3,
             Archon = 4,
             Legend = 5,
@@ -74,11 +73,13 @@ namespace TalentBot.Module
                 {
                     int num = int.Parse(nums[1]) - int.Parse(nums[0]);
                     await Context.Channel.SendMessageAsync($"{Context.Message.Author.Mention} rolls {rand.Next(num) + 1 + int.Parse(nums[0])}");
-                } else
+                }
+                else
                 {
                     throw new Exception("Input string was not in a correct format.");
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 await Context.Channel.SendMessageAsync($"{e.Message} \nUsage: roll <num1> <num2>");
             }
@@ -237,11 +238,15 @@ namespace TalentBot.Module
             List<String> players = OpenDotaAPI.GetPlayerIDs();
             var result = String.Join(", ", players.ToArray());
 
-            Console.WriteLine($"{result}");
+            //Console.WriteLine($"{result}");
 
             List<int> ranks = new List<int>();
-            StringBuilder sb1 = new StringBuilder("| ");
-            StringBuilder sb2 = new StringBuilder("| ");
+            StringBuilder radi_rank = new StringBuilder();
+            StringBuilder radi_name = new StringBuilder();
+            StringBuilder radi_numb = new StringBuilder();
+            StringBuilder dire_rank = new StringBuilder();
+            StringBuilder dire_name = new StringBuilder();
+            StringBuilder dire_numb = new StringBuilder();
 
             var builder = new EmbedBuilder()
             {
@@ -250,48 +255,141 @@ namespace TalentBot.Module
 
             for (int i = 0; i < 10; i++)
             {
-                PlayerData data = await OpenDotaAPI.GetPlayerDataAsync(players[i]);
+                PlayerData data = await OpenDotaAPI.GetPlayerData(players[i]);
                 int rank = 0;
                 if (data.rank_tier != null)
                 {
                     rank = Convert.ToInt32(data.rank_tier);
                 }
                 ranks.Add(rank);
-                if (i < 5)
+
+                if (i < 5)      // Radiant team
                 {
-                    if (rank == 0)
+
+                    if (data.profile != null)
                     {
-                        sb1.Append("Uncalibrated | ");
+                        radi_name.AppendLine($"{data.profile.personaname}");
+                        int solo = data.solo_competitive_rank == null ? 0 : int.Parse(data.solo_competitive_rank);
+                        int party = data.competitive_rank == null ? 0 : int.Parse(data.competitive_rank);
+                        int? est = data.mmr_estimate.estimate;
+
+                        if (solo == 0 && party == 0)
+                        {
+                            radi_numb.AppendLine($"Est: {est}");
+                        }
+                        else if (solo > party)
+                        {
+                            radi_numb.AppendLine($"Solo: {solo}");
+                        }
+                        else if (solo < party)
+                        {
+                            radi_numb.AppendLine($"Party: {party}");
+                        }
+                        else
+                        {
+                            radi_numb.AppendLine($"Est: {est}");
+                        }
                     }
                     else
                     {
-                        sb1.Append($"{(Medal)(rank / 10)} {rank % 10} | ");
+                        radi_name.AppendLine("Anonymous");
+                        radi_numb.AppendLine("N/A");
+                    }
+
+                    if (rank == 0)
+                    {
+                        radi_rank.AppendLine("Uncalibrated");
+                    }
+                    else
+                    {
+                        radi_rank.AppendLine($"{(Medal)(rank / 10)} {rank % 10}");
                     }
                 }
-                else
+                else            // Dire team
                 {
-                    if (rank == 0)
+                    if (data.profile != null)
                     {
-                        sb2.Append("Uncalibrated | ");
+                        dire_name.AppendLine($"{data.profile.personaname}");
+                        int solo = data.solo_competitive_rank == null ? 0 : int.Parse(data.solo_competitive_rank);
+                        int party = data.competitive_rank == null ? 0 : int.Parse(data.competitive_rank);
+                        int? est = data.mmr_estimate.estimate;
+
+                        if (solo == 0 && party == 0)
+                        {
+                            dire_numb.AppendLine($"Est: {est}");
+                        }
+                        else if (solo > party)
+                        {
+                            dire_numb.AppendLine($"Solo: {solo}");
+                        }
+                        else if (solo < party)
+                        {
+                            dire_numb.AppendLine($"Party: {party}");
+                        }
+                        else
+                        {
+                            dire_numb.AppendLine($"Est: {est}");
+                        }
                     }
                     else
                     {
-                        sb2.Append($"{(Medal)(rank / 10)} {rank % 10} | ");
+                        dire_name.AppendLine("Anonymous");
+                        dire_numb.AppendLine("N/A");
+                    }
+
+                    if (rank == 0)
+                    {
+                        dire_rank.AppendLine("Uncalibrated");
+                    }
+                    else
+                    {
+                        dire_rank.AppendLine($"{(Medal)(rank / 10)} {rank % 10}");
                     }
                 }
             }
 
+            Console.WriteLine(radi_name);
+            Console.WriteLine(dire_name);
+
             builder.AddField(x =>
             {
                 x.Name = "Radiant";
-                x.Value = sb1;
+                x.Value = radi_name;
+                x.IsInline = true;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "rank";
+                x.Value = radi_rank;
+                x.IsInline = true;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "mmr";
+                x.Value = radi_numb;
                 x.IsInline = true;
             });
 
             builder.AddField(x =>
             {
                 x.Name = "Dire";
-                x.Value = sb2;
+                x.Value = dire_name;
+                x.IsInline = true;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "rank";
+                x.Value = dire_rank;
+                x.IsInline = true;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "mmr";
+                x.Value = dire_numb;
                 x.IsInline = true;
             });
 
@@ -305,7 +403,7 @@ namespace TalentBot.Module
 
         [Command("lastmatch")]
         [Remarks("Get the last match on OpenDota")]
-        [MinPermissions(AccessLevel.BotOwner)]
+        [MinPermissions(AccessLevel.User)]
         public async Task LastMatch()
         {
             if (known_players.Count() == 0)
@@ -332,6 +430,117 @@ namespace TalentBot.Module
             }
 
             //await ReplyAsync("", false, builder.Build());
+        }
+
+        [Command("herostats")]
+        [Remarks("Get statistics for a specific hero")]
+        [MinPermissions(AccessLevel.BotOwner)]
+        public async Task HeroStats(string hero)
+        {
+            HeroData[] data = await OpenDotaAPI.GetHeroStatData();
+            HeroData stats = null;
+
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(114, 137, 218),
+            };
+
+            builder.AddField(x =>
+            {
+                x.Name = "Statistics";
+                StringBuilder labels = new StringBuilder("Pro\n");
+                for (int i = 1; i < 8; i++)
+                {
+                    labels.AppendLine($"{(Medal) i}");
+                }
+
+                labels.AppendLine("Total");
+
+                x.Value = labels;
+                x.IsInline = true;
+            });
+
+            int pro_picks = 0;
+            int one_picks = 0;
+            int two_picks = 0;
+            int three_picks = 0;
+            int four_picks = 0;
+            int five_picks = 0;
+            int six_picks = 0;
+            int seven_picks = 0;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (hero == data[i].localized_name)         // Check for hero
+                {
+                    stats = data[i];
+                }
+
+                pro_picks += data[i].pro_pick + data[i].pro_ban;
+                one_picks += data[i].one_pick;
+                two_picks += data[i].two_pick;
+                three_picks += data[i].three_pick;
+                four_picks += data[i].four_pick;
+                five_picks += data[i].five_pick;
+                six_picks += data[i].six_pick;
+                seven_picks += data[i].seven_pick;
+            }
+
+            Console.WriteLine(pro_picks);
+
+            if (stats != null)
+            {
+                builder.Title = stats.localized_name;
+
+                builder.AddField(x =>
+                {
+                    x.Name = "Winrate";
+
+                    StringBuilder winrate = new StringBuilder();
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)stats.pro_win / stats.pro_pick * 100));
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)stats.one_win / stats.one_pick * 100));
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)stats.two_win / stats.two_pick * 100));
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)stats.three_win / stats.three_pick * 100));
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)stats.four_win / stats.four_pick * 100));
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)stats.five_win / stats.five_pick * 100));
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)stats.six_win / stats.six_pick * 100));
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)stats.seven_win / stats.seven_pick * 100));
+
+                    int total_win = stats.one_win + stats.two_win + stats.three_win + stats.four_win + stats.five_win + stats.six_win + stats.seven_win;
+                    int total_pick = stats.one_pick + stats.two_pick + stats.three_pick + stats.four_pick + stats.five_pick + stats.six_pick + stats.seven_pick;
+                    winrate.AppendLine(string.Format("%{0:0.00}", (double)total_win / total_pick * 100));
+
+                    x.Value = winrate;
+                    x.IsInline = true;
+                });
+
+                builder.AddField(x =>
+                {
+                    x.Name = "Pickrate";
+
+                    StringBuilder pickrate = new StringBuilder();
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)(stats.pro_pick + stats.pro_ban) / pro_picks * 2200));
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)stats.one_pick / one_picks * 1000));
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)stats.two_pick / two_picks * 1000));
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)stats.three_pick / three_picks * 1000));
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)stats.four_pick / four_picks * 1000));
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)stats.five_pick / five_picks * 1000));
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)stats.six_pick / six_picks * 1000));
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)stats.seven_pick / seven_picks * 1000));
+
+                    int total_pick = stats.one_pick + stats.two_pick + stats.three_pick + stats.four_pick + stats.five_pick + stats.six_pick + stats.seven_pick;
+                    int total_picks = one_picks + two_picks + three_picks + four_picks + five_picks + six_picks + seven_picks;
+                    pickrate.AppendLine(string.Format("{0:0.00}%", (double)total_pick / total_picks * 1000));
+
+                    x.Value = pickrate;
+                    x.IsInline = true;
+                });
+
+                await ReplyAsync("", false, builder.Build());
+            } else
+            {
+                await ReplyAsync("Hero not found");
+            }
         }
     }
 }
