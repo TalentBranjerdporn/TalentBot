@@ -238,167 +238,90 @@ namespace TalentBot.Module
             List<String> players = OpenDotaAPI.GetPlayerIDs();
             var result = String.Join(", ", players.ToArray());
 
-            //Console.WriteLine($"{result}");
+            // Console.WriteLine($"{result}");
 
-            List<int> ranks = new List<int>();
-            StringBuilder radi_rank = new StringBuilder();
-            StringBuilder radi_name = new StringBuilder();
-            StringBuilder radi_numb = new StringBuilder();
-            StringBuilder dire_rank = new StringBuilder();
-            StringBuilder dire_name = new StringBuilder();
-            StringBuilder dire_numb = new StringBuilder();
+            StringBuilder ranks = new StringBuilder();
+            StringBuilder names = new StringBuilder();
+            StringBuilder mmr = new StringBuilder();
 
             var builder = new EmbedBuilder()
             {
                 Color = new Color(114, 137, 218),
             };
 
-            for (int i = 0; i < 10; i++)
+            foreach (String p in players)
             {
-                PlayerData data = await OpenDotaAPI.GetPlayerData(players[i]);
+                PlayerData data = await OpenDotaAPI.GetPlayerData(p);
+
                 int rank = 0;
                 if (data.rank_tier != null)
                 {
                     rank = Convert.ToInt32(data.rank_tier);
                 }
-                ranks.Add(rank);
 
-                if (i < 5)      // Radiant team
+                if (data.profile != null)
                 {
+                    names.AppendLine($"{data.profile.personaname}");
 
-                    if (data.profile != null)
+                    int solo = data.solo_competitive_rank == null ? 0 : int.Parse(data.solo_competitive_rank);
+                    int party = data.competitive_rank == null ? 0 : int.Parse(data.competitive_rank);
+                    int? est = data.mmr_estimate.estimate;
+
+                    if (solo == 0 && party == 0)
                     {
-                        radi_name.AppendLine($"{data.profile.personaname}");
-                        int solo = data.solo_competitive_rank == null ? 0 : int.Parse(data.solo_competitive_rank);
-                        int party = data.competitive_rank == null ? 0 : int.Parse(data.competitive_rank);
-                        int? est = data.mmr_estimate.estimate;
-
-                        if (solo == 0 && party == 0)
-                        {
-                            radi_numb.AppendLine($"Est: {est}");
-                        }
-                        else if (solo > party)
-                        {
-                            radi_numb.AppendLine($"Solo: {solo}");
-                        }
-                        else if (solo < party)
-                        {
-                            radi_numb.AppendLine($"Party: {party}");
-                        }
-                        else
-                        {
-                            radi_numb.AppendLine($"Est: {est}");
-                        }
+                        mmr.AppendLine($"Est: {est}");
+                    }
+                    else if (solo > party)
+                    {
+                        mmr.AppendLine($"Solo: {solo}");
+                    }
+                    else if (solo < party)
+                    {
+                        mmr.AppendLine($"Party: {party}");
                     }
                     else
                     {
-                        radi_name.AppendLine("Anonymous");
-                        radi_numb.AppendLine("N/A");
-                    }
-
-                    if (rank == 0)
-                    {
-                        radi_rank.AppendLine("Uncalibrated");
-                    }
-                    else
-                    {
-                        radi_rank.AppendLine($"{(Medal)(rank / 10)} {rank % 10}");
+                        mmr.AppendLine($"Est: {est}");
                     }
                 }
-                else            // Dire team
+                else
                 {
-                    if (data.profile != null)
-                    {
-                        dire_name.AppendLine($"{data.profile.personaname}");
-                        int solo = data.solo_competitive_rank == null ? 0 : int.Parse(data.solo_competitive_rank);
-                        int party = data.competitive_rank == null ? 0 : int.Parse(data.competitive_rank);
-                        int? est = data.mmr_estimate.estimate;
+                    names.AppendLine("Anonymous");
+                    mmr.AppendLine("N/A");
+                }
 
-                        if (solo == 0 && party == 0)
-                        {
-                            dire_numb.AppendLine($"Est: {est}");
-                        }
-                        else if (solo > party)
-                        {
-                            dire_numb.AppendLine($"Solo: {solo}");
-                        }
-                        else if (solo < party)
-                        {
-                            dire_numb.AppendLine($"Party: {party}");
-                        }
-                        else
-                        {
-                            dire_numb.AppendLine($"Est: {est}");
-                        }
-                    }
-                    else
-                    {
-                        dire_name.AppendLine("Anonymous");
-                        dire_numb.AppendLine("N/A");
-                    }
-
-                    if (rank == 0)
-                    {
-                        dire_rank.AppendLine("Uncalibrated");
-                    }
-                    else
-                    {
-                        dire_rank.AppendLine($"{(Medal)(rank / 10)} {rank % 10}");
-                    }
+                if (rank == 0)
+                {
+                    ranks.AppendLine("Uncalibrated");
+                }
+                else
+                {
+                    ranks.AppendLine($"{(Medal)(rank / 10)} {rank % 10}");
                 }
             }
 
-            Console.WriteLine(radi_name);
-            Console.WriteLine(dire_name);
-
             builder.AddField(x =>
             {
-                x.Name = "Radiant";
-                x.Value = radi_name;
+                x.Name = "Players";
+                x.Value = names;
                 x.IsInline = true;
             });
 
             builder.AddField(x =>
             {
-                x.Name = "rank";
-                x.Value = radi_rank;
+                x.Name = "Rank";
+                x.Value = ranks;
                 x.IsInline = true;
             });
 
             builder.AddField(x =>
             {
-                x.Name = "mmr";
-                x.Value = radi_numb;
+                x.Name = "MMR";
+                x.Value = mmr;
                 x.IsInline = true;
             });
-
-            builder.AddField(x =>
-            {
-                x.Name = "Dire";
-                x.Value = dire_name;
-                x.IsInline = true;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "rank";
-                x.Value = dire_rank;
-                x.IsInline = true;
-            });
-
-            builder.AddField(x =>
-            {
-                x.Name = "mmr";
-                x.Value = dire_numb;
-                x.IsInline = true;
-            });
-
-            //var stringsArray = ranks.Select(i => i.ToString()).ToArray();
-            //var output = string.Join(",", stringsArray);
 
             await ReplyAsync("", false, builder.Build());
-
-
         }
 
         [Command("lastmatch")]
@@ -409,6 +332,12 @@ namespace TalentBot.Module
             if (known_players.Count() == 0)
             {
                 known_players.Add("Pwnstar#6451", "110093717");
+                known_players.Add("abrafcukincadabra#0253", "105901322");
+                known_players.Add("SakanaFish#6718", "155807445");
+                known_players.Add("Anita Jackoff#2748", "247539735");
+                known_players.Add("Bazba#9700", "86990383");
+                known_players.Add("MajorLagGamer#7065", "100253408");
+
             }
 
             var builder = new EmbedBuilder()
@@ -434,8 +363,8 @@ namespace TalentBot.Module
 
         [Command("herostats")]
         [Remarks("Get statistics for a specific hero")]
-        [MinPermissions(AccessLevel.BotOwner)]
-        public async Task HeroStats(string hero)
+        [MinPermissions(AccessLevel.User)]
+        public async Task HeroStats(params string[] hero)
         {
             HeroData[] data = await OpenDotaAPI.GetHeroStatData();
             HeroData stats = null;
@@ -471,7 +400,7 @@ namespace TalentBot.Module
 
             for (int i = 0; i < data.Length; i++)
             {
-                if (hero == data[i].localized_name)         // Check for hero
+                if (String.Join(" ", hero.ToArray()) == data[i].localized_name)         // Check for hero
                 {
                     stats = data[i];
                 }
@@ -490,7 +419,34 @@ namespace TalentBot.Module
 
             if (stats != null)
             {
-                builder.Title = stats.localized_name;
+                //builder.Title = stats.localized_name;
+                builder.WithAuthor(x =>
+                {
+                    x.Name = stats.localized_name;
+                    x.IconUrl = $@"http://cdn.dota2.com{stats.icon}";
+                });
+
+                //builder.ThumbnailUrl = $@"http://cdn.dota2.com{stats.img}";
+
+                StringBuilder des = new StringBuilder();
+
+                des.AppendLine($"Health: {stats.base_health} + {stats.base_health_regen}");
+                des.AppendLine($"Mana: {stats.base_mana} + {stats.base_mana_regen}");
+                des.AppendLine($"Armor: {stats.base_armor}");
+                des.AppendLine($"Magic Resistance: {stats.base_mr}");
+                des.AppendLine($"Move speed: {stats.move_speed}");
+                des.AppendLine($"Turn rate: {stats.turn_rate}");
+                des.AppendLine($"Attack: {stats.base_attack_min} - {stats.base_attack_max}");
+                des.AppendLine($"Attack Speed: {stats.attack_rate}");
+                des.AppendLine($"Attack Range: {stats.attack_range}");
+                des.AppendLine($"Projectile Speed: {stats.projectile_speed}");
+                des.AppendLine($"Legs: {stats.legs}");
+                des.AppendLine();
+                des.AppendLine($"Strength: {stats.base_str} + {stats.str_gain}");
+                des.AppendLine($"Agility: {stats.base_agi} + {stats.agi_gain}");
+                des.AppendLine($"Intelligence: {stats.base_int} + {stats.int_gain}");
+
+                builder.Description = des.ToString();
 
                 builder.AddField(x =>
                 {
@@ -508,7 +464,7 @@ namespace TalentBot.Module
 
                     int total_win = stats.one_win + stats.two_win + stats.three_win + stats.four_win + stats.five_win + stats.six_win + stats.seven_win;
                     int total_pick = stats.one_pick + stats.two_pick + stats.three_pick + stats.four_pick + stats.five_pick + stats.six_pick + stats.seven_pick;
-                    winrate.AppendLine(string.Format("%{0:0.00}", (double)total_win / total_pick * 100));
+                    winrate.AppendLine(string.Format("{0:0.00}%", (double)total_win / total_pick * 100));
 
                     x.Value = winrate;
                     x.IsInline = true;

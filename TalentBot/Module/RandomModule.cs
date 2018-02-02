@@ -74,5 +74,14 @@ namespace TalentBot.Module
             string random_hifumi = bestgirl[rand.Next(bestgirl.Length)];
             await Context.Channel.SendFileAsync(random_hifumi);
         }
+
+        [Command("notlikethis")]
+        [Remarks("NotLikeThis")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task NotLikeThis()
+        {
+            string path = @"C:\Users\Talent\Dropbox\Pictures\Reactions\NotLikeThis.PNG";
+            await Context.Channel.SendFileAsync(path);
+        }
     }
 }

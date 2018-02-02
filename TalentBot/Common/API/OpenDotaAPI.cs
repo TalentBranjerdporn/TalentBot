@@ -100,13 +100,13 @@ namespace TalentBot.Common.API
         public static List<string> GetPlayerIDs()
         {
 
-            var GameInfo = GetLastLobby("F:\\Program Files (x86)\\Steam\\steamapps\\common\\dota 2 beta\\game\\dota\\server_log.txt");
+            var GameInfo = GetLastLobby(@"F:\Program Files (x86)\Steam\steamapps\common\dota 2 beta\game\dota\server_log.txt");
 
             var playerStartIndex = GameInfo.IndexOf('(') + 1;
             var playerEndIndex = GameInfo.IndexOf(')');
             var PlayerSection = GameInfo.Substring(playerStartIndex, playerEndIndex - playerStartIndex);
 
-            var Players = PlayerSection.Split(' ').Where(x => x.Contains("[U:")).Take(10).ToList();
+            var Players = PlayerSection.Split(' ').Where(x => x.Contains("[U:")).ToList();
 
             var Results = new List<string>();
 

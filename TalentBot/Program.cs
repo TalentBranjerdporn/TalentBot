@@ -93,6 +93,12 @@ namespace TalentBot
             {
                 await message.Channel.SendMessageAsync("yay!");
             }
+
+            if ((message.Content.Contains("good") || message.Content.Contains("Good")) && (message.Content.Contains("bot")))
+            {
+                string path = @"C:\Users\Talent\Dropbox\Pictures\Cute\NewGame\BestGirl\HifumiDidIt.gif";
+                await message.Channel.SendFileAsync(path);
+            }
         }
 
         private Task Log(LogMessage msg)

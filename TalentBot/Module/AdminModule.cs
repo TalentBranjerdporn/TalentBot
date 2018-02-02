@@ -8,6 +8,7 @@ using System.IO;
 using System;
 using TalentBot.Common.API;
 using System.Collections.Generic;
+using System.Text;
 
 namespace TalentBot.Modules
 {
@@ -85,5 +86,21 @@ namespace TalentBot.Modules
             
         }
 
+        [Command("todo")]
+        [Remarks("Future stuff")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Todo(params string[] input)
+        {
+            string path = @"F:\MyStuff\MyDocuments\scripts\Files\Text\Talbot\Todo.txt";
+            string text = String.Join(" ", input);
+
+            using (FileStream stream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.None, 4096, true))
+            using (StreamWriter sw = new StreamWriter(stream))
+            {
+                await sw.WriteLineAsync(text);
+            }
+
+            await ReplyAsync($"\'{text}\' has been added to the TODO list");
+        }
     }
 }
