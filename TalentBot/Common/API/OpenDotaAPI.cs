@@ -49,6 +49,15 @@ namespace TalentBot.Common.API
             return JsonConvert.DeserializeObject<HeroData[]>(result);
         }
 
+        public static async Task<WinLossData> GetWinLoss(string playerID)
+        {
+            string requestString = $@"https://api.opendota.com/api/players/{playerID}/wl?limit=20";
+
+            string result = await RequestHandler.GET(requestString);
+
+            return JsonConvert.DeserializeObject<WinLossData>(result);
+        }
+
         public static string GetLastLobby(string filePath)
         {
             var ServerLog = new List<string>();
@@ -104,22 +113,22 @@ namespace TalentBot.Common.API
 
             var playerStartIndex = GameInfo.IndexOf('(') + 1;
             var playerEndIndex = GameInfo.IndexOf(')');
-            var PlayerSection = GameInfo.Substring(playerStartIndex, playerEndIndex - playerStartIndex);
+            var playerSection = GameInfo.Substring(playerStartIndex, playerEndIndex - playerStartIndex);
 
-            var Players = PlayerSection.Split(' ').Where(x => x.Contains("[U:")).ToList();
+            var players = playerSection.Split(' ').Where(x => x.Contains("[U:")).ToList();
 
-            var Results = new List<string>();
+            var results = new List<string>();
 
-            foreach (var item in Players)
+            foreach (var item in players)
             {
                 var startIndex = item.LastIndexOf(':') + 1;
                 var endIndex = item.IndexOf(']');
                 var length = endIndex - startIndex;
 
-                Results.Add(item.Substring(startIndex, length));
+                results.Add(item.Substring(startIndex, length));
             }
 
-            return Results;
+            return results;
         }
     }
 }

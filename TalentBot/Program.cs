@@ -72,7 +72,7 @@ namespace TalentBot
                     {
                         if (message.Author.ToString() == "Pwnstar#6451")
                         {
-                            await message.Channel.SendMessageAsync($"Hi! Thanks for adding me to the server {message.Author.Mention}");
+                            await message.Channel.SendMessageAsync($"Hi {message.Author.Mention} I am awake");
                         }
                         else if (message.Author.ToString() == "!!#7047")
                         {

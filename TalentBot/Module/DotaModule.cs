@@ -251,21 +251,23 @@ namespace TalentBot.Module
 
             foreach (String p in players)
             {
-                PlayerData data = await OpenDotaAPI.GetPlayerData(p);
+                PlayerData pData = await OpenDotaAPI.GetPlayerData(p);
+                WinLossData wlData = await OpenDotaAPI.GetWinLoss(p);
 
                 int rank = 0;
-                if (data.rank_tier != null)
+                if (pData.rank_tier != null)
                 {
-                    rank = Convert.ToInt32(data.rank_tier);
+                    rank = Convert.ToInt32(pData.rank_tier);
                 }
 
-                if (data.profile != null)
+                if (pData.profile != null)
                 {
-                    names.AppendLine($"{data.profile.personaname}");
+                    names.AppendLine($"{pData.profile.personaname}");
 
-                    int solo = data.solo_competitive_rank == null ? 0 : int.Parse(data.solo_competitive_rank);
-                    int party = data.competitive_rank == null ? 0 : int.Parse(data.competitive_rank);
-                    int? est = data.mmr_estimate.estimate;
+                    // MMR
+                    int solo = pData.solo_competitive_rank == null ? 0 : int.Parse(pData.solo_competitive_rank);
+                    int party = pData.competitive_rank == null ? 0 : int.Parse(pData.competitive_rank);
+                    int? est = pData.mmr_estimate.estimate;
 
                     if (solo == 0 && party == 0)
                     {
@@ -283,6 +285,10 @@ namespace TalentBot.Module
                     {
                         mmr.AppendLine($"Est: {est}");
                     }
+
+                    // Win/Loss
+                    //mmr.AppendLine(string.Format("{0:0}%", (double) wlData.win / (wlData.win + wlData.lose) * 100));
+                    //mmr.AppendLine($"{wlData.win} {wlData.lose}");
                 }
                 else
                 {
@@ -292,11 +298,11 @@ namespace TalentBot.Module
 
                 if (rank == 0)
                 {
-                    ranks.AppendLine("Uncalibrated");
+                    ranks.AppendLine("[Uncalibrated](https://www.opendota.com/players/{p})");
                 }
                 else
                 {
-                    ranks.AppendLine($"{(Medal)(rank / 10)} {rank % 10}");
+                    ranks.AppendLine($"[{(Medal)(rank / 10)} {rank % 10}](https://www.opendota.com/players/{p})");
                 }
             }
 

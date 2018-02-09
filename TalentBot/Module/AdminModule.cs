@@ -88,7 +88,7 @@ namespace TalentBot.Modules
 
         [Command("todo")]
         [Remarks("Future stuff")]
-        [MinPermissions(AccessLevel.User)]
+        [MinPermissions(AccessLevel.BotOwner)]
         public async Task Todo(params string[] input)
         {
             string path = @"F:\MyStuff\MyDocuments\scripts\Files\Text\Talbot\Todo.txt";
@@ -101,6 +101,25 @@ namespace TalentBot.Modules
             }
 
             await ReplyAsync($"\'{text}\' has been added to the TODO list");
+        }
+
+        [Command("game")]
+        [Remarks("Change the game randomly")]
+        [MinPermissions(AccessLevel.BotOwner)]
+        public async Task ChangeGame()
+        {
+            Random rand = new Random();
+            string game = Hidden.game_display[rand.Next(Hidden.game_display.Length)];
+            await Context.Client.SetGameAsync(game);
+        }
+
+        [Command("game")]
+        [Remarks("Change the game to specific")]
+        [MinPermissions(AccessLevel.BotOwner)]
+        public async Task ChangeGame(int num)
+        {
+            string game = Hidden.game_display[num];
+            await Context.Client.SetGameAsync(game);
         }
     }
 }
