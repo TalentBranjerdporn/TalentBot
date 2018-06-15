@@ -111,6 +111,7 @@ namespace TalentBot.Modules
             Random rand = new Random();
             string game = Hidden.game_display[rand.Next(Hidden.game_display.Length)];
             await Context.Client.SetGameAsync(game);
+            await Context.Channel.SendMessageAsync(game);
         }
 
         [Command("game")]
@@ -120,6 +121,7 @@ namespace TalentBot.Modules
         {
             string game = Hidden.game_display[num];
             await Context.Client.SetGameAsync(game);
+            await Context.Channel.SendMessageAsync(game);
         }
     }
 }

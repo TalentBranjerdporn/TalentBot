@@ -23,7 +23,8 @@ namespace TalentBot.Module
             Archon = 4,
             Legend = 5,
             Ancient = 6,
-            Divine = 7
+            Divine = 7,
+            Immortal = 8
         };
 
         // Random instance
@@ -298,7 +299,11 @@ namespace TalentBot.Module
 
                 if (rank == 0)
                 {
-                    ranks.AppendLine("[Uncalibrated](https://www.opendota.com/players/{p})");
+                    ranks.AppendLine($"[Uncalibrated](https://www.opendota.com/players/{p})");
+                }
+                else if ((rank / 10) == 8)
+                {
+                    ranks.AppendLine($"[Immortal {pData.leaderboard_rank}](https://www.opendota.com/players/{p})");
                 }
                 else
                 {
