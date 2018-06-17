@@ -12,7 +12,7 @@ namespace TalentBot.Common.API
         public string solo_competitive_rank { get; set; }
         public string competitive_rank { get; set; }
         public object rank_tier { get; set; }
-        public int leaderboard_rank { get; set; }
+        public object leaderboard_rank { get; set; }
         public MmrEstimate mmr_estimate { get; set; }
         public Profile profile { get; set; }    
     }
