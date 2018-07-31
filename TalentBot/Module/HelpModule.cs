@@ -27,7 +27,12 @@ namespace TalentBot.Modules
 
             foreach (var module in _service.Modules)
             {
-                if (module.Name == "Blackjack" || module.Name == "Admin" || module.Name == "HelpModule" || module.Name == "Math" || module.Name == "RoShamBo")
+                if (module.Name == "Blackjack" || 
+                    module.Name == "Admin" || 
+                    module.Name == "HelpModule" || 
+                    module.Name == "Math" || 
+                    module.Name == "RoShamBo" ||
+                    module.Name == "Yugioh")
                 {
                     continue;
                 }
@@ -37,6 +42,10 @@ namespace TalentBot.Modules
 
                 foreach (var cmd in module.Commands)
                 {
+                    if (cmd.Name == "hentai")
+                    {
+                        continue;
+                    }
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
                     {

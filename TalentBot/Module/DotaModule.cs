@@ -348,6 +348,7 @@ namespace TalentBot.Module
                 known_players.Add("Anita Jackoff#2748", "247539735");
                 known_players.Add("Bazba#9700", "86990383");
                 known_players.Add("MajorLagGamer#7065", "100253408");
+                known_players.Add("Depression#6421", "302192086");
 
             }
 
@@ -367,6 +368,10 @@ namespace TalentBot.Module
                 //    x.Name = "Result";
                 //    x.Value = $@"https://www.opendota.com/matches/{data[0].match_id}";
                 //});
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync("Unknown User");
             }
 
             //await ReplyAsync("", false, builder.Build());

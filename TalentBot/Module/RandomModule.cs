@@ -83,5 +83,14 @@ namespace TalentBot.Module
             string path = @"C:\Users\Talent\Dropbox\Pictures\Reactions\NotLikeThis.PNG";
             await Context.Channel.SendFileAsync(path);
         }
+
+        [Command("hentai")]
+        [Remarks("Hentai for perverts")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task Hentai()
+        {
+            string path = @"C:\Users\Talent\Dropbox\Pictures\Reactions\Pervert.jpg";
+            await Context.Channel.SendFileAsync(path);
+        }
     }
 }

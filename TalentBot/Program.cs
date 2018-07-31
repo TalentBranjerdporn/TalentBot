@@ -10,6 +10,7 @@ namespace TalentBot
 {
     public class Program
     {
+        private const string WelcomeMessage = "Ready";
         private DiscordSocketClient _client;
 
         public static void Main(string[] args)
@@ -35,10 +36,10 @@ namespace TalentBot
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token);
             await _client.StartAsync();
 
-            ChangeGame();
-
             _commands = new CommandHandler();                // Initialize the command handler service
             await _commands.InstallAsync(_client);
+
+            ChangeGame();
 
             // Block this task until the program is closed.
             await Task.Delay(-1);
@@ -54,7 +55,6 @@ namespace TalentBot
                 "Nice to meet you",
                 "How are you today?",
                 "Hope you're having a nice day",
-                "You ready for some games?",
                 "Hello!",
                 "Hiya",
                 "Greetings"
@@ -76,7 +76,7 @@ namespace TalentBot
                         }
                         else if (message.Author.ToString() == "!!#7047")
                         {
-                            await message.Channel.SendMessageAsync($"Hello! I would appreciate if you didn't try to break me {message.Author.Mention}");
+                            await message.Channel.SendMessageAsync($"Hello! {message.Author.Mention}");
                         }
                         else
                         {
