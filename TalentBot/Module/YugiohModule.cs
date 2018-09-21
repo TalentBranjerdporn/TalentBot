@@ -87,31 +87,40 @@ namespace TalentBot.Modules
             }
         }
 
-        [Command("ygocard")]
-        [Remarks("Search for a card image.\nThanks to http://yugiohprices.com for the API")]
-        [MinPermissions(AccessLevel.User)]
-        public async Task YGOCard(params string[] search)               
+        [Command("ygosupport")]
+        [Remarks("Search card support.\nThanks to http://yugiohprices.com for the API")]
+        [MinPermissions(AccessLevel.BotOwner)]
+        public async Task YGOSupport(params string[] search)
         {
-            //string cardName = string.Join(" ", search);
+            string cardName = string.Join(" ", search);
 
-            //CardData request = await YGOAPI.GetCardData(cardName);
+            string[] request = await YGOAPI.GetCardSupportData(cardName);
 
-            //if (request.status == "success")
-            //{
-            //    var card = request.card;
-            //    var builder = new EmbedBuilder()
-            //    {
-            //        Color = new Color(114, 137, 218),
-            //    };
+            if (request != null)
+            {
+                var builder = new EmbedBuilder()
+                {
+                    Color = new Color(114, 137, 218),
+                };
+                builder.WithAuthor(x =>
+                {
+                    x.Name = cardName + " Support";
+                });
 
-            //    builder.ImageUrl = card.image_path;
+                StringBuilder des = new StringBuilder();
 
-            //    await Context.Channel.SendMessageAsync("", false, builder.Build());
-            //}
-            //else
-            //{
-            //    await Context.Channel.SendMessageAsync("Card does not exist");
-            //}
+                foreach (string support in request)
+                {
+                    des.AppendLine(support);
+                }
+
+                builder.Description = des.ToString();
+
+                await Context.Channel.SendMessageAsync("", false, builder.Build());
+            } else
+            {
+                await Context.Channel.SendMessageAsync("Card does not exist");
+            }
         }
     }
 }

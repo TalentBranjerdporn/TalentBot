@@ -24,5 +24,20 @@ namespace TalentBot.Common.API
                 return null;
             }
         }
+
+        public static async Task<string[]> GetCardSupportData(string cardName)
+        {
+            string result = await RequestHandler.GET($"http://yugiohprices.com/api/card_support/{cardName}");
+
+            if (result != null)
+            {
+                return JsonConvert.DeserializeObject<string[]>(result);
+            }
+            else
+            {
+                Console.WriteLine("CardSupportData Failed");
+                return null;
+            }
+        }
     }
 }
