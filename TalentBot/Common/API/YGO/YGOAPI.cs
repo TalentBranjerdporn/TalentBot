@@ -11,13 +11,13 @@ namespace TalentBot.Common.API
 {
     class YGOAPI
     {
-        public static async Task<YGOData.CardData> GetCardData(string cardName)
+        public static async Task<CardData> GetCardData(string cardName)
         {
             string result = await RequestHandler.GET($"http://yugiohprices.com/api/card_data/{cardName}");
 
             if (result != null)
             {
-                return JsonConvert.DeserializeObject<YGOData.CardData>(result);
+                return JsonConvert.DeserializeObject<CardData>(result);
             } else
             {
                 Console.WriteLine("CardData Failed");

@@ -43,7 +43,6 @@ namespace TalentBot.Common.API
                     //_SteamInstallPath = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Valve\\Steam", "InstallPath", "") as string;
                 }
                     
-
                 return _SteamInstallPath;
             }
         }

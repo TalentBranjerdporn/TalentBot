@@ -34,11 +34,11 @@ namespace TalentBot.Modules
         {
             string cardName = string.Join(" ", search);
 
-            YGOData.CardData request = await YGOAPI.GetCardData(cardName);
+            CardData request = await YGOAPI.GetCardData(cardName);
 
             if (request.status == "success")
             {
-                YGOData.Card data = request.data;
+                Card data = request.data;
                 var builder = new EmbedBuilder()
                 {
                     Color = new Color(114, 137, 218),
