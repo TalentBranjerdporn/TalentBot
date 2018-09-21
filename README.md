@@ -1,2 +1,2 @@
-# TalentBot
-Talent bored so Talent make bot
+# Tal-Bot
+Just a discord bot made for fun and learning C#
