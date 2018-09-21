@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace TalentBot.Common.API
 {
-    class YGOHubAPI
+    class YGOAPI
     {
-        public static async Task<CardData> GetCardData(string cardName)
+        public static async Task<YGOData.CardData> GetCardData(string cardName)
         {
-            string result = await RequestHandler.GET($"https://www.ygohub.com/api/card_info?name={cardName}");
+            string result = await RequestHandler.GET($"http://yugiohprices.com/api/card_data/{cardName}");
 
             if (result != null)
             {
-                return JsonConvert.DeserializeObject<CardData>(result);
+                return JsonConvert.DeserializeObject<YGOData.CardData>(result);
             } else
             {
                 Console.WriteLine("CardData Failed");

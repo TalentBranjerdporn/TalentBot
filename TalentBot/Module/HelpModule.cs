@@ -31,8 +31,7 @@ namespace TalentBot.Modules
                     module.Name == "Admin" || 
                     module.Name == "HelpModule" || 
                     module.Name == "Math" || 
-                    module.Name == "RoShamBo" ||
-                    module.Name == "Yugioh")
+                    module.Name == "RoShamBo")
                 {
                     continue;
                 }

@@ -16,59 +16,65 @@ namespace TalentBot.Modules
     [Name("Yugioh")]
     public class YugiohModule : ModuleBase<SocketCommandContext>
     {
-        [Command("ygocard")]
-        [Remarks("Search for a card.\nThanks to https://www.ygohub.com for the API")]
-        [MinPermissions(AccessLevel.BotOwner)]
-        public async Task YGOCard(params string[] search)
+        // Capitalising strings
+        private static string Capitalise(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return string.Empty;
+
+            char[] a = s.ToCharArray();
+            a[0] = char.ToUpper(a[0]);
+            return new string(a);
+        }
+
+        [Command("ygotext")]
+        [Remarks("Search for a card text.\nThanks to http://yugiohprices.com for the API")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task YGOText(params string[] search)
         {
             string cardName = string.Join(" ", search);
 
-            CardData request = await YGOHubAPI.GetCardData(cardName);
+            YGOData.CardData request = await YGOAPI.GetCardData(cardName);
 
             if (request.status == "success")
             {
-                var card = request.card;
+                YGOData.Card data = request.data;
                 var builder = new EmbedBuilder()
                 {
                     Color = new Color(114, 137, 218),
                 };
 
-                builder.ThumbnailUrl = card.image_path;
-
                 var urlName = string.Join("_", search);
                 builder.WithAuthor(x =>
                 {
-                    x.Name = card.name;
+                    x.Name = data.name;
                     x.Url = $"https://yugipedia.com/wiki/{urlName}";
                 });
 
                 StringBuilder des = new StringBuilder();
 
-                if (card.is_monster)
+                if (data.card_type.Equals("monster"))
                 {
-                    des.AppendLine($"Level: {card.stars}, " +
-                        $"Category: {card.type}, " +
-                        $"Type: {card.species}/{card.monster_types[0]}, " +
-                        $"Attribute: {card.attribute}");
+                    des.AppendLine($"Level: {data.level}, " +
+                        $"Category: {Capitalise(data.card_type)}, " +
+                        $"Type: {data.type}, " +
+                        $"Attribute: {Capitalise(data.family)}");
                     des.AppendLine();
-                    des.AppendLine(card.text);
+                    des.AppendLine(data.text);
                     des.AppendLine();
-                    des.AppendLine($"ATK: {card.attack}, " +
-                        $"DEF: {card.defense}");
-                }
-                else if (card.is_spell)
+                    des.AppendLine($"ATK: {data.atk}, " +
+                        $"DEF: {data.def}");
+                } else if (data.card_type.Equals("spell"))
                 {
-                    des.AppendLine($"Category: {card.type}, " +
-                        $"Property: {card.property}");
+                    des.AppendLine($"Category: {Capitalise(data.card_type)}, " +
+                        $"Property: {data.property}");
                     des.AppendLine();
-                    des.AppendLine(card.text);
-                }
-                else if (card.is_trap)
-                {
-                    des.AppendLine($"Category: {card.type}, " +
-                        $"Property: {card.property}");
+                    des.AppendLine(data.text);
+                } else if (data.card_type.Equals("trap")) {
+                    des.AppendLine($"Category: {Capitalise(data.card_type)}, " +
+                        $"Property: {data.property}");
                     des.AppendLine();
-                    des.AppendLine(card.text);
+                    des.AppendLine(data.text);
                 }
 
                 builder.Description = des.ToString();
@@ -79,6 +85,33 @@ namespace TalentBot.Modules
             {
                 await Context.Channel.SendMessageAsync("Card does not exist");
             }
+        }
+
+        [Command("ygocard")]
+        [Remarks("Search for a card image.\nThanks to http://yugiohprices.com for the API")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task YGOCard(params string[] search)               
+        {
+            //string cardName = string.Join(" ", search);
+
+            //CardData request = await YGOAPI.GetCardData(cardName);
+
+            //if (request.status == "success")
+            //{
+            //    var card = request.card;
+            //    var builder = new EmbedBuilder()
+            //    {
+            //        Color = new Color(114, 137, 218),
+            //    };
+
+            //    builder.ImageUrl = card.image_path;
+
+            //    await Context.Channel.SendMessageAsync("", false, builder.Build());
+            //}
+            //else
+            //{
+            //    await Context.Channel.SendMessageAsync("Card does not exist");
+            //}
         }
     }
 }
