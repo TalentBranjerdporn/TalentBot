@@ -237,9 +237,6 @@ namespace TalentBot.Module
         {
             // Get player IDs from server log
             List<String> players = OpenDotaAPI.GetPlayerIDs();
-            var result = String.Join(", ", players.ToArray());
-
-            // Console.WriteLine($"{result}");
 
             StringBuilder ranks = new StringBuilder();
             StringBuilder names = new StringBuilder();
@@ -253,7 +250,6 @@ namespace TalentBot.Module
             foreach (String p in players)
             {
                 PlayerData pData = await OpenDotaAPI.GetPlayerData(p);
-                WinLossData wlData = await OpenDotaAPI.GetWinLoss(p);
 
                 int rank = 0;
                 if (pData.rank_tier != null)
@@ -286,10 +282,6 @@ namespace TalentBot.Module
                     {
                         mmr.AppendLine($"Est: {est}");
                     }
-
-                    // Win/Loss
-                    //mmr.AppendLine(string.Format("{0:0}%", (double) wlData.win / (wlData.win + wlData.lose) * 100));
-                    //mmr.AppendLine($"{wlData.win} {wlData.lose}");
                 }
                 else
                 {
@@ -343,7 +335,7 @@ namespace TalentBot.Module
             if (known_players.Count() == 0)
             {
                 known_players.Add("Pwnstar#6451", "110093717");
-                known_players.Add("abrafcukincadabra#0253", "105901322");
+                known_players.Add("ihsur#0253", "105901322");
                 known_players.Add("SakanaFish#6718", "155807445");
                 known_players.Add("Anita Jackoff#2748", "247539735");
                 known_players.Add("Bazba#9700", "86990383");
@@ -377,6 +369,154 @@ namespace TalentBot.Module
             //await ReplyAsync("", false, builder.Build());
         }
 
+        [Command("battlecup")]
+        [Remarks("Get previous battlecup matches")]
+        [MinPermissions(AccessLevel.BotOwner)]
+        public async Task Battlecup()
+        {
+            // get player IDs from server log
+            List<String> players = OpenDotaAPI.GetPlayerIDs();
+            var result = String.Join(", ", players.ToArray());
+
+            // find team side
+            int master = players.IndexOf("110093717");
+            if (master < 5)
+            {
+                players.RemoveRange(0, 5);
+            }
+            else
+            {
+                players.RemoveRange(5, 5);
+            }
+
+            /*
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(114, 137, 218),
+            };
+
+            StringBuilder des = new StringBuilder();
+
+            foreach (string player in players)
+            {
+                des.AppendLine($"{player}");
+            }
+
+            builder.Description = des.ToString();
+            await ReplyAsync("", false, builder.Build());
+            */
+
+            StringBuilder ranks = new StringBuilder();
+            StringBuilder names = new StringBuilder();
+            StringBuilder mmr = new StringBuilder();
+
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(114, 137, 218),
+            };
+
+            foreach (String p in players)
+            {
+                PlayerData pData = await OpenDotaAPI.GetPlayerData(p);
+
+                int rank = 0;
+                if (pData.rank_tier != null)
+                {
+                    rank = Convert.ToInt32(pData.rank_tier);
+                }
+
+                if (pData.profile != null)
+                {
+                    names.AppendLine($"{pData.profile.personaname}");
+
+                    // MMR
+                    int solo = pData.solo_competitive_rank == null ? 0 : int.Parse(pData.solo_competitive_rank);
+                    int party = pData.competitive_rank == null ? 0 : int.Parse(pData.competitive_rank);
+                    int? est = pData.mmr_estimate.estimate;
+
+                    if (solo == 0 && party == 0)
+                    {
+                        mmr.AppendLine($"Est: {est}");
+                    }
+                    else if (solo > party)
+                    {
+                        mmr.AppendLine($"Solo: {solo}");
+                    }
+                    else if (solo < party)
+                    {
+                        mmr.AppendLine($"Party: {party}");
+                    }
+                    else
+                    {
+                        mmr.AppendLine($"Est: {est}");
+                    }
+                }
+                else
+                {
+                    names.AppendLine("Anonymous");
+                    mmr.AppendLine("N/A");
+                }
+
+                if (rank == 0)
+                {
+                    ranks.AppendLine($"[Uncalibrated](https://www.opendota.com/players/{p})");
+                }
+                else if ((rank / 10) == 8)
+                {
+                    ranks.AppendLine($"[Immortal {pData.leaderboard_rank}](https://www.opendota.com/players/{p})");
+                }
+                else
+                {
+                    ranks.AppendLine($"[{(Medal)(rank / 10)} {rank % 10}](https://www.opendota.com/players/{p})");
+                }
+            }
+
+            builder.AddField(x =>
+            {
+                x.Name = "Players";
+                x.Value = names;
+                x.IsInline = true;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "Rank";
+                x.Value = ranks;
+                x.IsInline = true;
+            });
+
+            builder.AddField(x =>
+            {
+                x.Name = "MMR";
+                x.Value = mmr;
+                x.IsInline = true;
+            });
+
+            await ReplyAsync("", false, builder.Build());
+
+
+
+            /* Find past 9 battlecup games
+            MatchData[] data = await OpenDotaAPI.GetPlayerMatches("110093717", 9, 0, 9);
+
+            var builder = new EmbedBuilder()
+            {
+                Color = new Color(114, 137, 218),
+            };
+
+            StringBuilder des = new StringBuilder();
+
+            foreach (MatchData match in data)
+            {
+                des.AppendLine($@"https://www.opendota.com/matches/{match.match_id}");
+            }
+
+            builder.Description = des.ToString();
+            await ReplyAsync("", false, builder.Build());
+            //await Context.Channel.SendMessageAsync($@"https://www.opendota.com/matches/{data[0].match_id}");
+            */
+        }
+
         [Command("herostats")]
         [Remarks("Get statistics for a specific hero")]
         [MinPermissions(AccessLevel.User)]
@@ -396,7 +536,7 @@ namespace TalentBot.Module
                 StringBuilder labels = new StringBuilder("Pro\n");
                 for (int i = 1; i < 8; i++)
                 {
-                    labels.AppendLine($"{(Medal) i}");
+                    labels.AppendLine($"{(Medal)i}");
                 }
 
                 labels.AppendLine("Total");
@@ -509,7 +649,8 @@ namespace TalentBot.Module
                 });
 
                 await ReplyAsync("", false, builder.Build());
-            } else
+            }
+            else
             {
                 await ReplyAsync("Hero not found");
             }

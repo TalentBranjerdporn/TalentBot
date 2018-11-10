@@ -45,6 +45,7 @@ namespace TalentBot.Modules
                     {
                         continue;
                     }
+
                     var result = await cmd.CheckPreconditionsAsync(Context);
                     if (result.IsSuccess)
                     {

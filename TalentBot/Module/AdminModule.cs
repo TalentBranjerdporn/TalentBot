@@ -114,14 +114,28 @@ namespace TalentBot.Modules
             await Context.Channel.SendMessageAsync(game);
         }
 
-        [Command("game")]
-        [Remarks("Change the game to specific")]
+        [Command("changestatus")]
+        [Remarks("Change the status")]
         [MinPermissions(AccessLevel.BotOwner)]
-        public async Task ChangeGame(int num)
+        public async Task ChangeStatus(int status)
         {
-            string game = Hidden.game_display[num];
-            await Context.Client.SetGameAsync(game);
-            await Context.Channel.SendMessageAsync(game);
+            await Context.Client.SetStatusAsync((UserStatus) status);
+        }
+
+        [Command("bestbot")]
+        [Remarks("Who's a good bot")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task BestBot()
+        {
+            await Context.Channel.SendMessageAsync($"I am best bot");
+        }
+
+        [Command("worstbot")]
+        [Remarks("Who's a bad bot")]
+        [MinPermissions(AccessLevel.User)]
+        public async Task WorstBot()
+        {
+            await Context.Channel.SendMessageAsync($"asdf is worst bot");
         }
     }
 }
